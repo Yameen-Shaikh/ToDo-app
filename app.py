@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from orm import Task, session
-from datetime import datetime
+from tabletype import PydTask
 
 app = FastAPI()
 
@@ -11,10 +11,9 @@ def get_db():
     finally:
         db.close()
         
-
 @app.post("/createTask")
-async def insert_task(title:str, details:str, date_time:datetime=datetime.now(), status:bool = False, priority:int = 1):
-    todo = Task(title=title, details=details, date_time=date_time, status=status, priority=priority)
+async def insert_task(task: PydTask):
+    todo = Task(title=task.title, details=task.details)
     session.add(todo)
     session.commit()
     return {"Task added successfully!🥳"}
