@@ -1,32 +1,36 @@
 from fastapi import FastAPI
-from orm import Task, session
+from models import Task, session
 from tabletype import PydTask
+from models import Session
 
 app = FastAPI()
 
-def get_db():
-    db = session()
-    try:
-        yield db
-    finally:
-        db.close()
-        
-@app.post("/createTask")
-async def insert_task(task: PydTask):
+#-----------------------------------CRUD operations-----------------------------------
+@app.post("/create-task")
+async def create_task(task: PydTask):
+    db = Session()
     todo = Task(title=task.title, details=task.details)
-    session.add(todo)
-    session.commit()
+    db.add(todo)
+    db.commit()
     return {"Task added successfully!🥳"}
 
-@app.get("/getTasks")
-async def get_all_task():
-    query = session.query(Task)
+@app.get("/get-tasks")
+async def get_tasks():
+    db = Session()
+    query = db.query(Task)
     return query.all()
 
-# @app.get("/getTaskDetails/{id}")
-# async def get_task_details(id:int, db:session = Depends(get_db)):
-#     tesk = db.query(Task).filter(Task.id == id).first()
-#     # query = session.query(Task).filter(Task.id == id)
-#     # task = query.first()
-#     return query.all()
+@app.get("/task-details/{id}")
+async def read_task(id: int):
+    db = Session()
+    task = db.query(Task).filter(Task.id == id).first()
+    return task
     
+@app.delete("/delete-task/{id}")
+async def delete_task(id: int):
+    db = Session()
+    task = db.query(Task).filter(Task.id == id).first()
+    db.delete(task)
+    db.commit()
+    return {"message":"Task deleted", "task":task}
+            

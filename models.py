@@ -19,10 +19,5 @@ class Task(Base):
     status = Column(Boolean, default=False)
     priority = Column(Integer, default=1)
     
-add_task1 = Task(title = 'Completed REST API', details = 'Watch videos')
-add_task2 = Task(title = 'Completed Python', details = 'Practise core concepts')
-add_task3 = Task(title = 'Completed OOPs', details = 'Take hand on experience')
-session.add_all([add_task1, add_task2, add_task3])
-session.commit()
-    
-# Base.metadata.create_all(engine)
+
+Base.metadata.create_all(engine)
