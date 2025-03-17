@@ -16,8 +16,8 @@ class Task(Base):
     title = Column(String(50))
     details = Column(String(50))
     date_time = Column(DateTime, default=datetime.datetime.now)
-    status = Column(Boolean, default=False)
+    completed = Column(Boolean, default=False)
     priority = Column(Integer, default=1)
-    
+
 
 Base.metadata.create_all(engine)

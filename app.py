@@ -1,11 +1,12 @@
-from fastapi import FastAPI
-from models import Task, session
+from fastapi import FastAPI, HTTPException
+from models import Task
 from tabletype import PydTask
 from models import Session
 
+
 app = FastAPI()
 
-#-----------------------------------CRUD operations-----------------------------------
+#---------------------------------------- CRUD operations ----------------------------------------
 @app.post("/create-task")
 async def create_task(task: PydTask):
     db = Session()
@@ -24,8 +25,19 @@ async def get_tasks():
 async def read_task(id: int):
     db = Session()
     task = db.query(Task).filter(Task.id == id).first()
+    if Task.id != id:
+        raise HTTPException(status_code=400, detail="Task with {id} not found!")
     return task
-    
+
+@app.put("/update-task/{id}")
+async def update_task(id: int, task: PydTask):
+    db = Session()
+    todo = db.query(Task).filter(Task.id == id).first()
+    todo.title = task.title
+    todo.details = task.details
+    db.commit()
+    return {"message":"Task updated", "task":todo}
+        
 @app.delete("/delete-task/{id}")
 async def delete_task(id: int):
     db = Session()
