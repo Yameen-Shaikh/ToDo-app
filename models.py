@@ -1,11 +1,8 @@
 import datetime
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy.orm import DeclarativeBase
+from db import engine
 
-engine = create_engine('postgresql://postgres:0000@localhost:5432/postgres', echo=False)
-
-Session = sessionmaker(bind=engine)
-session = Session()
 
 class Base(DeclarativeBase):
     pass
@@ -19,5 +16,10 @@ class Task(Base):
     completed = Column(Boolean, default=False)
     priority = Column(Integer, default=1)
 
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    username = Column(String(30))
+    hashed_password = Column(String(100))
 
 Base.metadata.create_all(engine)
